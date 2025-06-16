@@ -23,23 +23,5 @@ namespace WallE
             value = Value;
         }
 
-
-        // public TokenType Type { get; set; }
-        // public string Lexeme { get; set; }
-        // public object Literal { get; set; }
-        // public
-
-        // public Token(TokenType type, string lexeme, object literal)
-        // {
-        //     Type = type;
-        //     Lexeme = lexeme;
-        //     Literal = literal;
-        // }
-
-        // public string toString()
-        // {
-        //     return Type + " " + Lexeme + " " + Literal;
-        // }
-
     }
 }

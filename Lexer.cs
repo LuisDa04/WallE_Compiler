@@ -15,13 +15,20 @@ namespace WallE
 
         public Lexer(string Text)
         {
-            text = Text;
+            text = Text ?? string.Empty;
         }
 
         public Token NextToken()
         {
             if(position >= text.Length)
                 return new Token(TokenType.EOF, line, position, string.Empty, null);
+
+
+            while (char.IsWhiteSpace(current) && current != '\n')
+                position++;
+
+            if (current == '\n')
+                return ObtenerNuevaLinea();
 
             if(current == '"')
                 return ObtenerString();
@@ -32,15 +39,12 @@ namespace WallE
             if(IsOperBin())
                 return ObtenerOperBin();
 
-            if(singleToken.TryGetValue(current, out var singleToken))
+            if(singleToken.TryGetValue(current, out var singTok))
             {
-                var proove = new Token(singleToken, line, position, current.ToString(), null!);
+                var proove = new Token(singTok, line, position, current.ToString(), null!);
                 position++;
                 return proove;
             }
-
-            if(char.IsWhiteSpace(current))
-                return ObtenerEspacio();
 
             if(char.IsDigit(current))
                 return ObtenerNumber();
@@ -60,6 +64,14 @@ namespace WallE
             return id >=text.Length ? '\0' : text[id];
         }
 
+        Token ObtenerNuevaLinea()
+        {
+            var start = position;
+            position++;;
+            line++;
+            return new Token(TokenType.NewLine, line, start, "\n", null!);
+        }
+
         Token ObtenerString()
         {
             var start = position;
@@ -71,8 +83,16 @@ namespace WallE
                 if(current == '\n')
                 {
                     Error.SetError("SYNTAX", $"Line {line}: Saltos de linea no validos");
-                    return new Token(Token.Error, line, position, Text.Substring(start), null!);
+                    return new Token(TokenType.Error, line, position, text.Substring(start), null!);
                 }
+
+                if (current == '\\' && !final)
+                    final = true;
+
+                else
+                    final = false;
+
+                position++;
             }
 
             if(current == '\0')
@@ -85,7 +105,7 @@ namespace WallE
 
             var center = stock.Substring(1, stock.Length - 2);
 
-            string clean = value.Replace("\\\"", "\"").Replace("\\\\", "\\");
+            string clean = center.Replace("\\\"", "\"").Replace("\\\\", "\\");
 
             return new Token(TokenType.String, line, start, stock, clean);
         }
@@ -131,12 +151,12 @@ namespace WallE
 
         bool IsOperBin()
         {
-            if ((current == '=' && NextChar == '=') ||
-                    (current == '<' && NextChar == '=') ||
-                    (current == '>' && NextChar == '=') ||
-                    (current == '&' && NextChar == '&') ||
-                    (current == '|' && NextChar == '|') ||
-                    (current == '*' && NextChar == '*'))
+            if ((current == '=' && next == '=') ||
+                    (current == '<' && next == '=') ||
+                    (current == '>' && next == '=') ||
+                    (current == '&' && next == '&') ||
+                    (current == '|' && next == '|') ||
+                    (current == '*' && next == '*'))
             {
                 return true;
             }
@@ -157,7 +177,7 @@ namespace WallE
 
             string test = text.Substring(position, 2);
 
-            Token token = test switch
+            TokenType tok = test switch
             {
                 "==" => TokenType.IgualQue,
                 ">=" => TokenType.MayorIgualQue,
@@ -170,7 +190,7 @@ namespace WallE
 
             position += 2;
 
-            return token == TokenType.Error ? TheresError(test, start) : new Token(token, line, start, test, null!);
+            return tok == TokenType.Error ? TheresError(test, start) : new Token(tok, line, start, test, null!);
         }
 
         private Token TheresError(string test, int start)
@@ -208,24 +228,34 @@ namespace WallE
 
             position++;
 
-            while (char.IsLetterOrDigit(current) || current == '_' || current == '-')
+            while (char.IsLetterOrDigit(current) || current == '_')
                 position++;
 
             int identLenght = position - start;
             string identText = text.Substring(start, identLenght);
 
-            if (current == '\n' || current == '\0')
-            {
-                return new Token(TokenType.Label, line, start, identText, identText);
-            }
 
             TokenType token = LexerUtilities.GetKeywordToken(identText);
 
             return new Token(token, line, start, identText, null!);
         }
 
+        public IEnumerable<Token> LexAll()
+        {
+            Token tok;
 
+            do
+            {
+                tok = NextToken();
 
+                if (tok.token == SyntaxKind.Error)
+                    Error.SetError("LEXICAL", $"Line{line} : Token no valido: {current}");
+
+                yield return token;
+
+            }
+            while (token.Kind != SyntaxKind.EndOfFileToken);
+        }
 
 
 
