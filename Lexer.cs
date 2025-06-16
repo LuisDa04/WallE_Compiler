@@ -21,7 +21,7 @@ namespace WallE
         public Token NextToken()
         {
             if(position >= text.Length)
-                return new Token(Token.EOF, line, position, string.Empty, null);
+                return new Token(TokenType.EOF, line, position, string.Empty, null);
 
             if(current == '"')
                 return ObtenerString();
@@ -32,11 +32,11 @@ namespace WallE
             if(IsOperBin())
                 return ObtenerOperBin();
 
-            if(OperUn.TryGetValue(current, out var singleToken))
+            if(singleToken.TryGetValue(current, out var singleToken))
             {
-                var test = new Token(singleToken, line, position, current.ToString(), null!);
+                var proove = new Token(singleToken, line, position, current.ToString(), null!);
                 position++;
-                return test;
+                return proove;
             }
 
             if(char.IsWhiteSpace(current))
@@ -78,7 +78,7 @@ namespace WallE
             if(current == '\0')
             {
                 Error.SetError("SYNTAX", $"Line {line}: No es una cadena valida");
-                return new Token(TokenType.ErrorToken, line, start, Text.Substring(start, position - start), null!);
+                return new Token(TokenType.Error, line, start, text.Substring(start, position - start), null!);
             }            
             position++;
             var stock = text.Substring(start, position - start);
@@ -87,7 +87,7 @@ namespace WallE
 
             string clean = value.Replace("\\\"", "\"").Replace("\\\\", "\\");
 
-            return new Token(TokenType.String, line, start, stock, clean)
+            return new Token(TokenType.String, line, start, stock, clean);
         }
 
         Token ObtenerNumber()
@@ -105,7 +105,7 @@ namespace WallE
                 return new Token(TokenType.Error, line, start, text, null!);
             }
 
-            return new Token(TokenType.Numero, line, start, test, value)
+            return new Token(TokenType.Numero, line, start, test, value);
         }
 
         Token ObtenerEspacio()
@@ -126,17 +126,17 @@ namespace WallE
 
             var test = text.Substring(start, position - start);
 
-            return new Token(TokenType.Whitespace, line, start, test, null!);
+            return new Token(TokenType.WhiteEspace, line, start, test, null!);
         }
 
         bool IsOperBin()
         {
-            if ((Current == '=' && NextChar == '=') ||
-                    (Current == '<' && NextChar == '=') ||
-                    (Current == '>' && NextChar == '=') ||
-                    (Current == '&' && NextChar == '&') ||
-                    (Current == '|' && NextChar == '|') ||
-                    (Current == '*' && NextChar == '*'))
+            if ((current == '=' && NextChar == '=') ||
+                    (current == '<' && NextChar == '=') ||
+                    (current == '>' && NextChar == '=') ||
+                    (current == '&' && NextChar == '&') ||
+                    (current == '|' && NextChar == '|') ||
+                    (current == '*' && NextChar == '*'))
             {
                 return true;
             }
@@ -170,7 +170,7 @@ namespace WallE
 
             position += 2;
 
-            return token == TokenType.Error ? TheresError(test, start) : new SyntaxToken(token, line, start, test, null!);
+            return token == TokenType.Error ? TheresError(test, start) : new Token(token, line, start, test, null!);
         }
 
         private Token TheresError(string test, int start)

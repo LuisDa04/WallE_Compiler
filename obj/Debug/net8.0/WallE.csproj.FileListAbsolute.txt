@@ -1,0 +1,5 @@
+D:\Prueba WallE\WallE_Compiler\obj\Debug\net8.0\WallE.GeneratedMSBuildEditorConfig.editorconfig
+D:\Prueba WallE\WallE_Compiler\obj\Debug\net8.0\WallE.AssemblyInfoInputs.cache
+D:\Prueba WallE\WallE_Compiler\obj\Debug\net8.0\WallE.AssemblyInfo.cs
+D:\Prueba WallE\WallE_Compiler\obj\Debug\net8.0\WallE.csproj.CoreCompileInputs.cache
+D:\Prueba WallE\WallE_Compiler\obj\Debug\net8.0\WallE.sourcelink.json

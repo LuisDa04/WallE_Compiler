@@ -9,7 +9,7 @@ namespace WallE
     {
         //Keywords
         Spawn, Color, Size, DrawLine, DrawCircle, DrawRectangle, Fill, 
-        GetActualX, GetActualY, GetCanvasSize, GetColorCount, IsBrushColor, IsBrushSize, IsCanvassColor,
+        GetActualX, GetActualY, GetCanvasSize, GetColorCount, IsBrushColor, IsBrushSize, IsCanvasColor,
         GoTo,
 
         //Anothers
