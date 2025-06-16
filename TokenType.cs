@@ -15,6 +15,7 @@ namespace WallE
         //Anothers
         Asignacion,
         Identificador, Numero, ColorLiteral, String,
+        TrueTok, FalseTok,
         ParentesisAbre, ParentesisCierra, CorcheteAbre, CorcheteCierra, Coma,
         Error,
         WhiteEspace, EOF, Label, NewLine,
