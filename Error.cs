@@ -7,16 +7,35 @@ namespace WallE
 {
     public class Error
     {
-        public static bool wrong = false;
-        public static string message = "";
-        public static string typeMessage = "";
+        private static List<string> errores = new List<string>();
+        private static bool errorActivo = false;
 
-        public static void SetError(string type, string msg)
+        public static void SetError(string tipo, string msg)
         {
-            if (wrong) return;
-            wrong = true;
-            message = msg;
-            typeMessage = type;
+            if (!errorActivo)
+            {
+                errorActivo = true;
+                errores.Add($"Tipo: {tipo} - Mensaje: {msg}");
+            }
+        }
+
+        public static void ImprimirErrores()
+        {
+            if (errores.Count > 0)
+            {
+                Console.WriteLine("Errores encontrados:");
+                foreach (var error in errores)
+                {
+                    Console.WriteLine(error);
+                }
+                Console.WriteLine($"Total de errores: {errores.Count}");
+            }
+            else
+            {
+                Console.WriteLine("No se encontraron errores.");
+            }
+            errorActivo = false;
+            errores.Clear();
         }
     }
 }

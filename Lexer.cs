@@ -257,7 +257,5 @@ namespace WallE
             while (token.Kind != SyntaxKind.EndOfFileToken);
         }
 
-
-
     }
 }

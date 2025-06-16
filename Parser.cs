@@ -404,7 +404,7 @@ namespace WallE
             var parameters = ParseParameters();
 
             if (parameters.Count != 1)
-                ErrorsCollecter.Add("SYNTAX", "Size solo requiere un parametro", Current.Line);
+                Error.SetError("SYNTAX", $"Line {Current.Line}: Size solo requiere un parametro");
 
             var sizeArg = parameters.ElementAtOrDefault(0) ?? new LiteralNode(1, Current.Line);
 
@@ -413,12 +413,12 @@ namespace WallE
 
         InstructionNode ParseDrawLine()
         {
-            Match(TokenType.DrawLineKeyword, "Se esperaba 'DrawLine'");
+            Match(TokenType.DrawLine, "Se esperaba 'DrawLine'");
 
             var parameters = ParseParameters();
 
             if (parameters.Count != 3)
-                ErrorsCollecter.Add("SYNTAX", "DrawLine requiere 3 parámetros", Current.Line);
+                Error.SetError("SYNTAX", $"Line {Current.Line}: DrawLine requiere 3 parámetros");
 
             var firstArg = parameters.ElementAtOrDefault(0) ?? new LiteralNode(0, Current.Line);
 
@@ -431,12 +431,12 @@ namespace WallE
 
         InstructionNode ParseDrawCircle()
         {
-            Match(TokenType.DrawCircleKeyword, "Se esperaba 'DrawCircle'");
+            Match(TokenType.DrawCircle, "Se esperaba 'DrawCircle'");
 
             var parameters = ParseParameters();
 
             if (parameters.Count != 3)
-                ErrorsCollecter.Add("SYNTAX", "DrawCircle requiere 3 parámetros", Current.Line);
+                Error.SetError("SYNTAX", $"Line {Current.Line}: DrawCircle requiere 3 parámetros");
 
             var firstArg = parameters.ElementAtOrDefault(0) ?? new LiteralNode(0, Current.Line);
 
@@ -449,12 +449,12 @@ namespace WallE
 
         InstructionNode ParseDrawRectangle()
         {
-            Match(TokenType.DrawRectangleKeyword, "Se esperaba 'DrawRectangle'");
+            Match(TokenType.DrawRectangle, "Se esperaba 'DrawRectangle'");
 
             var parameters = ParseParameters();
 
             if (parameters.Count != 5)
-                ErrorsCollecter.Add("SYNTAX", "DrawRectangle solo requiere 5 parámetros", Current.Line);
+                Error.SetError("SYNTAX", $"Line {Current.Line}: DrawRectangle solo requiere 5 parámetros");
 
             var dirX  = parameters.ElementAtOrDefault(0) ?? new LiteralNode(0, Current.Line);
             var dirY  = parameters.ElementAtOrDefault(1) ?? new LiteralNode(0, Current.Line);
@@ -466,37 +466,37 @@ namespace WallE
         }
 
 
-        BinaryOperator MapToBinaryOperator(TokenType TokenType)
+        BinaryOperator MapToBinaryOperator(TokenType tokenType)
         {
-            return TokenType switch
+            return tokenType switch
             {
-                TokenType.PlusToken => BinaryOperator.Plus,
+                TokenType.Suma => BinaryOperator.Plus,
 
-                TokenType.MinusToken => BinaryOperator.Minus,
+                TokenType.Resta => BinaryOperator.Minus,
 
-                TokenType.MultToken => BinaryOperator.Mult,
+                TokenType.Multiplicacion => BinaryOperator.Mult,
 
-                TokenType.SlashToken => BinaryOperator.Slash,
+                TokenType.Division => BinaryOperator.Slash,
 
-                TokenType.ModToken => BinaryOperator.Mod,
+                TokenType.Modulo => BinaryOperator.Mod,
 
-                TokenType.LessToken => BinaryOperator.LessThan,
+                TokenType.MenorQue => BinaryOperator.LessThan,
 
-                TokenType.LessOrEqualToken => BinaryOperator.LessThanOrEqual,
+                TokenType.MenorIgualQue => BinaryOperator.LessThanOrEqual,
 
-                TokenType.GreaterToken => BinaryOperator.GreaterThan,
+                TokenType.MayorQue => BinaryOperator.GreaterThan,
 
-                TokenType.GreaterOrEqualToken => BinaryOperator.GreaterThanOrEqual,
+                TokenType.MayorIgualQue => BinaryOperator.GreaterThanOrEqual,
 
-                TokenType.EqualToken => BinaryOperator.Equal,
+                TokenType.IgualQue => BinaryOperator.Equal,
 
-                TokenType.AndAndToken => BinaryOperator.AndAnd,
+                TokenType.And => BinaryOperator.AndAnd,
 
-                TokenType.OrOrToken => BinaryOperator.OrOr,
+                TokenType.Or => BinaryOperator.OrOr,
 
-                TokenType.PowToken => BinaryOperator.Pow,
+                TokenType.Potencia => BinaryOperator.Pow,
 
-                _ => throw new InvalidOperationException($"Operador binario inesperado: {TokenType}")
+                _ => throw new InvalidOperationException($"Operador binario inesperado: {tokenType}")
             };
         }
 
