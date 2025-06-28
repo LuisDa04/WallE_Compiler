@@ -251,7 +251,7 @@ namespace WallE
                 if (tok.token == TokenType.Error)
                     Error.SetError("LEXICAL", $"Line{line} : Token no valido: {current}");
 
-                yield return token;
+                yield return tok;
 
             }
             while (tok.token != TokenType.EOF);

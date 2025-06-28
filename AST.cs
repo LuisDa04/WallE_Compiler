@@ -133,7 +133,7 @@ namespace WallE
 
             private string Error(string message, SemanticContext semanticContext)
             {
-                semanticContext.GetErrors(message, Line);
+                semanticContext.GetErrors(message, line);
                 return "desconocido";
             }
 

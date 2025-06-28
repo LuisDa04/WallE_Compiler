@@ -6,18 +6,26 @@ using AST = WallE.AST;
 using InstructionNode = WallE.AST.InstructionNode;
 using ExpressionNode = WallE.AST.ExpressionNode;
 using ProgramNode = WallE.AST.ProgramNode;
-using BinaryOperator = WallE.AST.BinaryOperator;
 using UnaryOperator = WallE.AST.UnaryOperator;
 using FunctionKind = WallE.AST.FunctionKind;
 using LabelNode = WallE.AST.LabelNode;
 using GoToNode = WallE.AST.GoToNode;
-using FillNode = WallE.AST.FillNode;
 using BinaryExpressionNode = WallE.AST.BinaryExpressionNode;
 using LiteralNode = WallE.AST.LiteralNode;
 using DrawCircleNode = WallE.AST.DrawCircleNode;
 using DrawLineNode = WallE.AST.DrawLineNode;
 using DrawRectangleNode = WallE.AST.DrawRectangleNode;
 using SizeNode = WallE.AST.SizeNode;
+using InvalidExpressionNode = WallE.AST.InvalidExpressionNode;
+using UnaryExpressionNode = WallE.AST.UnaryExpressionNode;
+using BuiltInFunctionNode = WallE.AST.BuiltInFunctionNode;
+using VariableNode = WallE.AST.VariableNode;
+using BinaryOperator = WallE.AST.BinaryOperator;
+using AssignmentNode = WallE.AST.AssignmentNode;
+using SpawnNode = WallE.AST.SpawnNode;
+using ColorNode = WallE.AST.ColorNode;
+using FillNode = WallE.AST.FillNode;
+
 
 namespace WallE
 {
@@ -226,7 +234,7 @@ namespace WallE
                 {
                     Error.SetError("SYNTAX", $"Line {opToken.line}: Operador binario inesperado: '{opToken.text}'");
 
-                    return new InvalidExpressionNode($"Operador inesperado: '{opToken.Text}'", opToken.line);
+                    return new InvalidExpressionNode($"Operador inesperado: '{opToken.text}'", opToken.line);
                 }
 
                 var right = ParseBinaryExpression(precedence + 1);
@@ -263,7 +271,7 @@ namespace WallE
             if (unaryPrec > 0)
             {
                 var opToken = Current;
-                var opKind = (Current.token == TokenType.MinusToken)? UnaryOperator.Minus: UnaryOperator.Not;
+                var opKind = (Current.token == TokenType.Resta)? UnaryOperator.Resta: UnaryOperator.Not;
 
                 NextToken();
 
@@ -282,7 +290,7 @@ namespace WallE
         {
             if (Current.token == TokenType.Numero)
             {
-                var text = Current.Text;
+                var text = Current.text;
 
                 var token = Current;
 
@@ -298,7 +306,7 @@ namespace WallE
 
             if (Current.token == TokenType.String)
             {
-                var raw = Current.Text;
+                var raw = Current.text;
 
                 var token = Current;
 
@@ -332,7 +340,7 @@ namespace WallE
                 || Current.token == TokenType.IsCanvasColor
             )
             {
-                var name = Current.Text;
+                var name = Current.text;
 
                 var token = Current;
 
@@ -367,11 +375,11 @@ namespace WallE
 
             var wrong = Current;
 
-            Error.SetError("SYNTAX", $"Line {wrong.Line}: Se esperaba expresión primaria, encontró '{wrong.text}'");
+            Error.SetError("SYNTAX", $"Line {wrong.line}: Se esperaba expresión primaria, encontró '{wrong.text}'");
 
             NextToken();
 
-            return new InvalidExpressionNode($"Token inesperado '{wrong.text}'", wrong.Line);
+            return new InvalidExpressionNode($"Token inesperado '{wrong.text}'", wrong.line);
         }
 
         InstructionNode ParseAssignment()
@@ -415,7 +423,7 @@ namespace WallE
 
         InstructionNode ParseSize()
         {
-            Match(TokenType.SizeKeyword, "Se esperaba 'Size' ");
+            Match(TokenType.Size, "Se esperaba 'Size' ");
 
             var parameters = ParseParameters();
 

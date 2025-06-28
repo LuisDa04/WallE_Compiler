@@ -5,12 +5,26 @@ using AST = WallE.AST;
 using InstructionNode = WallE.AST.InstructionNode;
 using ExpressionNode = WallE.AST.ExpressionNode;
 using ProgramNode = WallE.AST.ProgramNode;
-using LabelNode = WallE.AST.LabelNode;
-using FunctionKind = WallE.AST.FunctionKind;
+using InvalidExpressionNode = WallE.AST.InvalidExpressionNode;
+using UnaryExpressionNode = WallE.AST.UnaryExpressionNode;
+using BuiltInFunctionNode = WallE.AST.BuiltInFunctionNode;
+using VariableNode = WallE.AST.VariableNode;
 using BinaryOperator = WallE.AST.BinaryOperator;
 using UnaryOperator = WallE.AST.UnaryOperator;
-using BinaryExpressionNode = WallE.AST.BinaryExpressionNode;
+using AssignmentNode = WallE.AST.AssignmentNode;
+using LabelNode = WallE.AST.LabelNode;
+using GoToNode = WallE.AST.GoToNode;
+using SpawnNode = WallE.AST.SpawnNode;
+using ColorNode = WallE.AST.ColorNode;
+using SizeNode = WallE.AST.SizeNode;
+using DrawLineNode = WallE.AST.DrawLineNode;
+using DrawCircleNode = WallE.AST.DrawCircleNode;
+using DrawRectangleNode = WallE.AST.DrawRectangleNode;
+using FillNode = WallE.AST.FillNode;
+using FunctionKind = WallE.AST.FunctionKind;
 using LiteralNode = WallE.AST.LiteralNode;
+using BinaryExpressionNode = WallE.AST.BinaryExpressionNode;
+
 
 namespace WallE
 {
@@ -21,7 +35,7 @@ namespace WallE
         private Dictionary<string, object> environment = new Dictionary<string, object>();
         private Canvas canvas;
         
-        // Estado de Wall-E
+
         private int currentX;
         private int currentY;
         private string brushColor = "Transparent";
@@ -31,7 +45,7 @@ namespace WallE
         {
             this.program = program;
             canvas = new Canvas(canvasSize);
-            // Construimos la tabla de etiquetas a partir de los nodos Label
+
             for (int i = 0; i < program.Instructions.Count; i++)
             {
                 if (program.Instructions[i] is LabelNode labelNode)
@@ -41,15 +55,15 @@ namespace WallE
 
         public void Execute()
         {
-            // Recorrer la lista de instrucciones con un contador (program counter)
+            
             int pc = 0;
             while (pc < program.Instructions.Count)
             {
                 InstructionNode instruction = program.Instructions[pc];
                 int oldPc = pc;
-                // Ejecuta la instrucción y, en caso de un salto GoTo, actualizará pc
+                
                 pc = ExecuteInstruction(instruction, pc);
-                // Si no se realizó un salto (GoTo) que modifique pc, continuamos a la siguiente instrucción
+                
                 if (pc == oldPc)
                     pc++;
             }
@@ -61,7 +75,7 @@ namespace WallE
             {
                 int x = (int)Evaluate(spawn.XExpression);
                 int y = (int)Evaluate(spawn.YExpression);
-                // Validar que la posición esté dentro del canvas
+                
                 if (x < 0 || x >= canvas.Size || y < 0 || y >= canvas.Size)
                 {
                     Console.WriteLine($"Error de ejecución: Posición ({x},{y}) fuera del canvas.");
@@ -83,7 +97,7 @@ namespace WallE
             else if (instr is SizeNode sizeInstr)
             {
                 int size = (int)Evaluate(sizeInstr.SizeExpression);
-                // Determina el tamaño impar (si es par, se resta 1)
+                
                 if (size % 2 == 0)
                     size = Math.Max(1, size - 1);
                 brushSize = size;
@@ -97,7 +111,7 @@ namespace WallE
                 int endX = currentX + dirX * distance;
                 int endY = currentY + dirY * distance;
                 DrawLine(currentX, currentY, endX, endY);
-                // Actualizar la posición de Wall-E al final de la línea
+                
                 currentX = endX;
                 currentY = endY;
                 Console.WriteLine($"Dibujó línea hasta ({endX},{endY})");
@@ -108,7 +122,7 @@ namespace WallE
                 int dirY = (int)Evaluate(drawCircle.DirYExpression);
                 int radius = (int)Evaluate(drawCircle.RadiusExpression);
                 DrawCircle(currentX + dirX, currentY + dirY, radius);
-                // La posición de Wall-E se puede dejar intacta o actualizarse según tu diseño
+                
                 Console.WriteLine($"Dibujó círculo con centro en ({currentX + dirX},{currentY + dirY}) y radio {radius}");
             }
             else if (instr is DrawRectangleNode drawRect)
@@ -153,9 +167,7 @@ namespace WallE
             return pc;
         }
 
-        /// <summary>
-        /// Evalúa de forma recursiva una expresión del AST y retorna un valor (int, bool, string).
-        /// </summary>
+        
         private object Evaluate(ExpressionNode expr)
         {
             if (expr is LiteralNode literal)
@@ -230,7 +242,7 @@ namespace WallE
                     case FunctionKind.GetCanvasSize:
                         return canvas.Size;
                     case FunctionKind.GetColorCount:
-                        // Se espera: (string color, int x1, int y1, int x2, int y2)
+                        
                         if (argValues.Count == 5)
                             return GetColorCount((string)argValues[0], (int)argValues[1], (int)argValues[2], (int)argValues[3], (int)argValues[4]);
                         break;
@@ -259,7 +271,7 @@ namespace WallE
             return null;
         }
 
-        // Métodos para funciones integradas
+       
 
         private int GetColorCount(string color, int x1, int y1, int x2, int y2)
         {
@@ -271,8 +283,7 @@ namespace WallE
             return count;
         }
 
-        // Métodos de dibujo:
-        // Usamos el algoritmo de Bresenham para dibujar líneas.
+        
         private void DrawLine(int x0, int y0, int x1, int y1)
         {
             int dx = Math.Abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
@@ -293,6 +304,33 @@ namespace WallE
                 {
                     err += dx;
                     y0 += sy;
+                }
+            }
+        }
+
+        private void Fill(int x, int y, string color)
+        {
+            string targetColor = canvas.GetPixel(x, y);
+            if (targetColor == null || targetColor == color || color == "Transparent")
+                return;
+
+            Queue<(int, int)> queue = new Queue<(int, int)>();
+            queue.Enqueue((x, y));
+
+            while (queue.Count > 0)
+            {
+                var (cx, cy) = queue.Dequeue();
+                string current = canvas.GetPixel(cx, cy);
+                if (current != targetColor)
+                    continue;
+
+                canvas.SetPixel(cx, cy, color);
+
+                foreach (var (dx, dy) in new[] { (0,1), (1,0), (0,-1), (-1,0) })
+                {
+                    int nx = cx + dx, ny = cy + dy;
+                    if (canvas.GetPixel(nx, ny) == targetColor)
+                        queue.Enqueue((nx, ny));
                 }
             }
         }
@@ -334,7 +372,7 @@ namespace WallE
             DrawLine(startX, endY, startX, startY);
         }
 
-        // Dibuja un píxel teniendo en cuenta el tamaño de la brocha
+        
         private void DrawPixel(int x, int y)
         {
             int half = brushSize / 2;
@@ -343,7 +381,7 @@ namespace WallE
                     canvas.SetPixel(x + i, y + j, brushColor);
         }
 
-        // Permite mostrar el canvas en consola al finalizar o durante la ejecución
+        
         public void ShowCanvas()
         {
             canvas.Print();
