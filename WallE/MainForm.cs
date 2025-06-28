@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Windows.Forms;
+using WallE;
 
 namespace WallE
 {
@@ -36,7 +37,10 @@ namespace WallE
             };
 
             runButton.Click += (sender, e) => {
-                MessageBox.Show("Aquí irá la ejecución del compilador");
+                //MessageBox.Show("Aquí irá la ejecución del compilador");
+                var interpreter = new Interpreter();
+                interpreter.Execute();
+                interpreter.ShowCanvas();
             };
 
             Controls.Add(canvas);

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WallE")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+86dbd3f417e2a931312186d0bef2b16fad199b29")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0abe9f8a85145f72dc076056c883402973d1b97b")]
 [assembly: System.Reflection.AssemblyProductAttribute("WallE")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WallE")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
