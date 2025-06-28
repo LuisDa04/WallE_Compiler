@@ -2,6 +2,22 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AST = WallE.AST;
+using InstructionNode = WallE.AST.InstructionNode;
+using ExpressionNode = WallE.AST.ExpressionNode;
+using ProgramNode = WallE.AST.ProgramNode;
+using BinaryOperator = WallE.AST.BinaryOperator;
+using UnaryOperator = WallE.AST.UnaryOperator;
+using FunctionKind = WallE.AST.FunctionKind;
+using LabelNode = WallE.AST.LabelNode;
+using GoToNode = WallE.AST.GoToNode;
+using FillNode = WallE.AST.FillNode;
+using BinaryExpressionNode = WallE.AST.BinaryExpressionNode;
+using LiteralNode = WallE.AST.LiteralNode;
+using DrawCircleNode = WallE.AST.DrawCircleNode;
+using DrawLineNode = WallE.AST.DrawLineNode;
+using DrawRectangleNode = WallE.AST.DrawRectangleNode;
+using SizeNode = WallE.AST.SizeNode;
 
 namespace WallE
 {
@@ -80,7 +96,7 @@ namespace WallE
                 if (instr != null)
                     instructions.Add(instr);
             }
-            return new ProgramNode(instructions, Current.Line);
+            return new ProgramNode(instructions, Current.line);
         }
         
         InstructionNode ParseInstruction()
@@ -92,10 +108,10 @@ namespace WallE
 
                 NextToken();
 
-                if (!labelsTable.TryAdd(labelToken.Text, labelToken.Line))
-                    Error.SetError("SYNTAX", $"Line {labelToken.line}: La etiqueta '{labelToken.Text}' ya esta definida");
+                if (!labelsTable.TryAdd(labelToken.text, labelToken.line))
+                    Error.SetError("SYNTAX", $"Line {labelToken.line}: La etiqueta '{labelToken.text}' ya esta definida");
                 
-                return new LabelNode(labelToken.Text, labelToken.Line);
+                return new LabelNode(labelToken.text, labelToken.line);
             }
 
             switch (Current.token)
@@ -112,7 +128,7 @@ namespace WallE
 
 
                     default:
-                        Error.SetError("SYNTAX", $"Line {Current.line}: Instruccion desconocida: {Current.Text}");
+                        Error.SetError("SYNTAX", $"Line {Current.line}: Instruccion desconocida: {Current.text}");
 
                         while (!IsAtEnd && Current.token != TokenType.NewLine)
                             NextToken();
@@ -152,8 +168,8 @@ namespace WallE
 
             var labelToken = Match(TokenType.Identificador, "Se esperaba un identifier dentro de GoTo");
 
-            if (!labelsTable.ContainsKey(labelToken.Text))
-                Error.SetError("SEMANTIC", $"Line {Current.Line}: La etiqueta {labelToken.Text} no existe en el contexto actual");
+            if (!labelsTable.ContainsKey(labelToken.text))
+                Error.SetError("SEMANTIC", $"Line {Current.line}: La etiqueta {labelToken.text} no existe en el contexto actual");
             
 
             Match(TokenType.CorcheteCierra, "Se esperaba ']'");
@@ -164,7 +180,7 @@ namespace WallE
 
             Match(TokenType.ParentesisCierra, "Se esperaba ')'");
 
-            return new GoToNode(labelToken.Text, condition, labelToken.Line);
+            return new GoToNode(labelToken.text, condition, labelToken.line);
 
         }
 
@@ -177,13 +193,13 @@ namespace WallE
             {
                 var args = ParseParameters();
                 if (args.Count > 0)
-                    Error.SetError("SYNTAX", $"Line {Current.Line}: Fill no recibe parámetros");
+                    Error.SetError("SYNTAX", $"Line {Current.line}: Fill no recibe parámetros");
             }
 
             else
-                Error.SetError("SYNTAX", $"Line {Current.Line}: Se esperaba () despues de Fill");
+                Error.SetError("SYNTAX", $"Line {Current.line}: Se esperaba () despues de Fill");
 
-            return new FillNode(Current.Line);
+            return new FillNode(Current.line);
         }
 
         ExpressionNode ParseExpression(int parentPrecedence = 0)
@@ -208,16 +224,16 @@ namespace WallE
 
                 if (!EsOperadorBinarioValido(opToken.token))
                 {
-                    Error.SetError("SYNTAX", $"Line {opToken.Line}: Operador binario inesperado: '{opToken.Text}'");
+                    Error.SetError("SYNTAX", $"Line {opToken.line}: Operador binario inesperado: '{opToken.text}'");
 
-                    return new InvalidExpressionNode($"Operador inesperado: '{opToken.Text}'", opToken.Line);
+                    return new InvalidExpressionNode($"Operador inesperado: '{opToken.Text}'", opToken.line);
                 }
 
                 var right = ParseBinaryExpression(precedence + 1);
 
-                var op = MapToBinaryOperator(opToken.Kind);
+                var op = MapToBinaryOperator(opToken.token);
 
-                left = new BinaryExpressionNode(left, op, right, opToken.Line);
+                left = new BinaryExpressionNode(left, op, right, opToken.line);
             }
 
             return left;
@@ -254,9 +270,9 @@ namespace WallE
                 var operand = ParseUnaryOrPrimary();
 
                 if (operand is InvalidExpressionNode)
-                    return new InvalidExpressionNode("Error en operador unario", opToken.Line);
+                    return new InvalidExpressionNode("Error en operador unario", opToken.line);
 
-                return new UnaryExpressionNode(opKind, operand, opToken.Line);
+                return new UnaryExpressionNode(opKind, operand, opToken.line);
             }
 
             return ParsePrimary();
@@ -273,11 +289,11 @@ namespace WallE
                 NextToken();
 
                 if (int.TryParse(text, out int value))
-                    return new LiteralNode(value, Current.Line);
+                    return new LiteralNode(value, Current.line);
 
-                Error.SetError("SYNTAX", $"Line {Current.Line}: Número inválido '{text}'");
+                Error.SetError("SYNTAX", $"Line {Current.line}: Número inválido '{text}'");
 
-                return new InvalidExpressionNode($"Número inválido '{text}'", Current.Line);
+                return new InvalidExpressionNode($"Número inválido '{text}'", Current.line);
             }
 
             if (Current.token == TokenType.String)
@@ -290,7 +306,7 @@ namespace WallE
 
                 var str = raw[1..^1];
 
-                return new LiteralNode(str, Current.Line);
+                return new LiteralNode(str, Current.line);
             }
 
             if (Current.token == TokenType.TrueTok || Current.token == TokenType.FalseTok)
@@ -301,7 +317,7 @@ namespace WallE
 
                 NextToken();
 
-                return new LiteralNode(val, Current.Line);
+                return new LiteralNode(val, Current.line);
             }
 
             if
@@ -327,16 +343,16 @@ namespace WallE
                     var args = ParseParameters();  
 
                     if (Enum.TryParse<FunctionKind>(name, out var kind))
-                        return new BuiltInFunctionNode(kind, args, token.Line);
+                        return new BuiltInFunctionNode(kind, args, token.line);
 
-                    Error.SetError("SYNTAX", $"Line {token.Line}: Función desconocida '{name}'");
-                    return new InvalidExpressionNode($"Función desconocida '{name}'", token.Line);
+                    Error.SetError("SYNTAX", $"Line {token.line}: Función desconocida '{name}'");
+                    return new InvalidExpressionNode($"Función desconocida '{name}'", token.line);
                 }
 
-                return new VariableNode(name, Current.Line);
+                return new VariableNode(name, Current.line);
             }
 
-            if (Current.Kind == TokenType.ParentesisAbre)
+            if (Current.token == TokenType.ParentesisAbre)
             {
                 var token = Current;
 
@@ -351,11 +367,11 @@ namespace WallE
 
             var wrong = Current;
 
-            Error.SetError("SYNTAX", $"Line {wrong.Line}: Se esperaba expresión primaria, encontró '{wrong.Text}'");
+            Error.SetError("SYNTAX", $"Line {wrong.Line}: Se esperaba expresión primaria, encontró '{wrong.text}'");
 
             NextToken();
 
-            return new InvalidExpressionNode($"Token inesperado '{wrong.Text}'", wrong.Line);
+            return new InvalidExpressionNode($"Token inesperado '{wrong.text}'", wrong.Line);
         }
 
         InstructionNode ParseAssignment()
@@ -366,7 +382,7 @@ namespace WallE
 
             var expr = ParseExpression();
 
-            return new AssignmentNode(idToken.Text, expr, idToken.Line);
+            return new AssignmentNode(idToken.text, expr, idToken.line);
         }
 
         InstructionNode ParseSpawn()
@@ -376,14 +392,14 @@ namespace WallE
             var parameters = ParseParameters();
 
             if (parameters.Count != 2)
-                Error.SetError("SYNTAX", $"Line {Current.Line}: Spawn requiere solo 2 parametros");
+                Error.SetError("SYNTAX", $"line {Current.line}: Spawn requiere solo 2 parametros");
 
 
-            var xExpr = parameters.ElementAtOrDefault(0) ?? new LiteralNode(0, Current.Line);
+            var xExpr = parameters.ElementAtOrDefault(0) ?? new LiteralNode(0, Current.line);
 
-            var yExpr = parameters.ElementAtOrDefault(1) ?? new LiteralNode(0, Current.Line);
+            var yExpr = parameters.ElementAtOrDefault(1) ?? new LiteralNode(0, Current.line);
 
-            return new SpawnNode(xExpr, yExpr, Current.Line);
+            return new SpawnNode(xExpr, yExpr, Current.line);
         }
 
         InstructionNode ParseColor()
@@ -392,9 +408,9 @@ namespace WallE
 
             var parameters = ParseParameters();
 
-            var expression = parameters.FirstOrDefault() ?? new LiteralNode("Transparent",Current.Line);
+            var expression = parameters.FirstOrDefault() ?? new LiteralNode("Transparent",Current.line);
 
-            return new ColorNode(expression, expression.Line);
+            return new ColorNode(expression, expression.line);
         }
 
         InstructionNode ParseSize()
@@ -404,11 +420,11 @@ namespace WallE
             var parameters = ParseParameters();
 
             if (parameters.Count != 1)
-                Error.SetError("SYNTAX", $"Line {Current.Line}: Size solo requiere un parametro");
+                Error.SetError("SYNTAX", $"Line {Current.line}: Size solo requiere un parametro");
 
-            var sizeArg = parameters.ElementAtOrDefault(0) ?? new LiteralNode(1, Current.Line);
+            var sizeArg = parameters.ElementAtOrDefault(0) ?? new LiteralNode(1, Current.line);
 
-            return new SizeNode(sizeArg, Current.Line);
+            return new SizeNode(sizeArg, Current.line);
         }
 
         InstructionNode ParseDrawLine()
@@ -418,15 +434,15 @@ namespace WallE
             var parameters = ParseParameters();
 
             if (parameters.Count != 3)
-                Error.SetError("SYNTAX", $"Line {Current.Line}: DrawLine requiere 3 parámetros");
+                Error.SetError("SYNTAX", $"Line {Current.line}: DrawLine requiere 3 parámetros");
 
-            var firstArg = parameters.ElementAtOrDefault(0) ?? new LiteralNode(0, Current.Line);
+            var firstArg = parameters.ElementAtOrDefault(0) ?? new LiteralNode(0, Current.line);
 
-            var secondArg = parameters.ElementAtOrDefault(1) ?? new LiteralNode(0, Current.Line);
+            var secondArg = parameters.ElementAtOrDefault(1) ?? new LiteralNode(0, Current.line);
 
-            var thirdArg = parameters.ElementAtOrDefault(2) ?? new LiteralNode(0, Current.Line);
+            var thirdArg = parameters.ElementAtOrDefault(2) ?? new LiteralNode(0, Current.line);
 
-            return new DrawLineNode(firstArg, secondArg, thirdArg, Current.Line);            
+            return new DrawLineNode(firstArg, secondArg, thirdArg, Current.line);            
         }
 
         InstructionNode ParseDrawCircle()
@@ -436,15 +452,15 @@ namespace WallE
             var parameters = ParseParameters();
 
             if (parameters.Count != 3)
-                Error.SetError("SYNTAX", $"Line {Current.Line}: DrawCircle requiere 3 parámetros");
+                Error.SetError("SYNTAX", $"Line {Current.line}: DrawCircle requiere 3 parámetros");
 
-            var firstArg = parameters.ElementAtOrDefault(0) ?? new LiteralNode(0, Current.Line);
+            var firstArg = parameters.ElementAtOrDefault(0) ?? new LiteralNode(0, Current.line);
 
-            var secondArg = parameters.ElementAtOrDefault(1) ?? new LiteralNode(0, Current.Line);
+            var secondArg = parameters.ElementAtOrDefault(1) ?? new LiteralNode(0, Current.line);
 
-            var thirdArg = parameters.ElementAtOrDefault(2) ?? new LiteralNode(0, Current.Line);
+            var thirdArg = parameters.ElementAtOrDefault(2) ?? new LiteralNode(0, Current.line);
 
-            return new DrawCircleNode(firstArg, secondArg, thirdArg, Current.Line);
+            return new DrawCircleNode(firstArg, secondArg, thirdArg, Current.line);
         }
 
         InstructionNode ParseDrawRectangle()
@@ -454,15 +470,15 @@ namespace WallE
             var parameters = ParseParameters();
 
             if (parameters.Count != 5)
-                Error.SetError("SYNTAX", $"Line {Current.Line}: DrawRectangle solo requiere 5 parámetros");
+                Error.SetError("SYNTAX", $"Line {Current.line}: DrawRectangle solo requiere 5 parámetros");
 
-            var dirX  = parameters.ElementAtOrDefault(0) ?? new LiteralNode(0, Current.Line);
-            var dirY  = parameters.ElementAtOrDefault(1) ?? new LiteralNode(0, Current.Line);
-            var dist  = parameters.ElementAtOrDefault(2) ?? new LiteralNode(0, Current.Line);
-            var width = parameters.ElementAtOrDefault(3) ?? new LiteralNode(1, Current.Line);
-            var height= parameters.ElementAtOrDefault(4) ?? new LiteralNode(1, Current.Line);
+            var dirX  = parameters.ElementAtOrDefault(0) ?? new LiteralNode(0, Current.line);
+            var dirY  = parameters.ElementAtOrDefault(1) ?? new LiteralNode(0, Current.line);
+            var dist  = parameters.ElementAtOrDefault(2) ?? new LiteralNode(0, Current.line);
+            var width = parameters.ElementAtOrDefault(3) ?? new LiteralNode(1, Current.line);
+            var height= parameters.ElementAtOrDefault(4) ?? new LiteralNode(1, Current.line);
             
-            return new DrawRectangleNode(dirX, dirY, dist, width, height, Current.Line);
+            return new DrawRectangleNode(dirX, dirY, dist, width, height, Current.line);
         }
 
 
@@ -470,31 +486,31 @@ namespace WallE
         {
             return tokenType switch
             {
-                TokenType.Suma => BinaryOperator.Plus,
+                TokenType.Suma => BinaryOperator.Suma,
 
-                TokenType.Resta => BinaryOperator.Minus,
+                TokenType.Resta => BinaryOperator.Resta,
 
-                TokenType.Multiplicacion => BinaryOperator.Mult,
+                TokenType.Multiplicacion => BinaryOperator.Multiplicacion,
 
-                TokenType.Division => BinaryOperator.Slash,
+                TokenType.Division => BinaryOperator.Division,
 
-                TokenType.Modulo => BinaryOperator.Mod,
+                TokenType.Modulo => BinaryOperator.Modulo,
 
-                TokenType.MenorQue => BinaryOperator.LessThan,
+                TokenType.MenorQue => BinaryOperator.MenorQue,
 
-                TokenType.MenorIgualQue => BinaryOperator.LessThanOrEqual,
+                TokenType.MenorIgualQue => BinaryOperator.MenorIgualQue,
 
-                TokenType.MayorQue => BinaryOperator.GreaterThan,
+                TokenType.MayorQue => BinaryOperator.MayorQue,
 
-                TokenType.MayorIgualQue => BinaryOperator.GreaterThanOrEqual,
+                TokenType.MayorIgualQue => BinaryOperator.MayorIgualQue,
 
-                TokenType.IgualQue => BinaryOperator.Equal,
+                TokenType.IgualQue => BinaryOperator.IgualQue,
 
-                TokenType.And => BinaryOperator.AndAnd,
+                TokenType.And => BinaryOperator.And,
 
-                TokenType.Or => BinaryOperator.OrOr,
+                TokenType.Or => BinaryOperator.Or,
 
-                TokenType.Potencia => BinaryOperator.Pow,
+                TokenType.Potencia => BinaryOperator.Potencia,
 
                 _ => throw new InvalidOperationException($"Operador binario inesperado: {tokenType}")
             };

@@ -21,7 +21,7 @@ namespace WallE
         {
             protected InstructionNode(int line) : base(line) {}
 
-            public abstract void  Validate(SemanticContext context)
+            public abstract void  Validate(SemanticContext context);
         }
 
         public abstract class ExpressionNode : ASTNode, ISemanticNode
@@ -164,7 +164,7 @@ namespace WallE
 
             string Error(string message, SemanticContext semanticContext)
             {
-                semanticContext.GetErrors(message, Line);
+                semanticContext.GetErrors(message, line);
 
                 return "desconocido";
             }
@@ -205,7 +205,7 @@ namespace WallE
             {
                 if (!semanticContext.VariablesTable.TryGetValue(Name, out var type))
                 {
-                    semanticContext.GetErrors($"Variable {Name} no declarada", Line);
+                    semanticContext.GetErrors($"Variable {Name} no declarada", line);
 
                     return "desconocido";
                 }
@@ -239,7 +239,7 @@ namespace WallE
 
                 {
                     if (Arguments.Count != 0)
-                        semanticContext.GetErrors($"'{FunctionKind}' no recibe argumentos", Line);
+                        semanticContext.GetErrors($"'{FunctionKind}' no recibe argumentos", line);
 
                     return "int";
                 }
@@ -248,17 +248,17 @@ namespace WallE
                 {
                     if (Arguments.Count != 5)
                     {
-                        semanticContext.GetErrors($"GetColorCount requiere 5 argumentos, pero se pasaron {Arguments.Count}", Line);
+                        semanticContext.GetErrors($"GetColorCount requiere 5 argumentos, pero se pasaron {Arguments.Count}", line);
                         return "desconocido";
                     }
 
                     if (Arguments[0].CheckType(semanticContext) != "string")
-                        semanticContext.GetErrors("GetColorCount: primer argumento debe ser string", Line);
+                        semanticContext.GetErrors("GetColorCount: primer argumento debe ser string", line);
 
 
                     for (int i = 1; i < 5; i++)
                         if (Arguments[i].CheckType(semanticContext) != "int")
-                            semanticContext.GetErrors($"GetColorCount: argumento #{i + 1} debe ser int", Line);
+                            semanticContext.GetErrors($"GetColorCount: argumento #{i + 1} debe ser int", line);
 
                     return "int";
                 }
@@ -268,12 +268,12 @@ namespace WallE
                 {
                     if (Arguments.Count != 1)
                     {
-                        semanticContext.GetErrors($"IsBrushColor requiere 1 argumento, pero se pasaron {Arguments.Count}", Line);
+                        semanticContext.GetErrors($"IsBrushColor requiere 1 argumento, pero se pasaron {Arguments.Count}", line);
                         return "desconocido";
                     }
 
                     if (Arguments[0].CheckType(semanticContext) != "string")
-                        semanticContext.GetErrors("IsBrushColor: argumento debe ser string", Line);
+                        semanticContext.GetErrors("IsBrushColor: argumento debe ser string", line);
 
                     return "int";
                 }
@@ -283,11 +283,11 @@ namespace WallE
                 {
                     if (Arguments.Count != 1)
                     {
-                        semanticContext.GetErrors($"IsBrushSize requiere 1 argumento, pero se pasaron {Arguments.Count}", Line);
+                        semanticContext.GetErrors($"IsBrushSize requiere 1 argumento, pero se pasaron {Arguments.Count}", line);
                         return "desconocido";
                     }
                     if (Arguments[0].CheckType(semanticContext) != "int")
-                        semanticContext.GetErrors("IsBrushSize: argumento debe ser int", Line);
+                        semanticContext.GetErrors("IsBrushSize: argumento debe ser int", line);
 
                     return "int";
                 }
@@ -297,24 +297,24 @@ namespace WallE
                 {
                     if (Arguments.Count != 3)
                     {
-                        semanticContext.GetErrors($"IsCanvasColor requiere 3 argumentos, pero se pasaron {Arguments.Count}", Line);
+                        semanticContext.GetErrors($"IsCanvasColor requiere 3 argumentos, pero se pasaron {Arguments.Count}", line);
                         return "desconocido";
                     }
 
                     if (Arguments[0].CheckType(semanticContext) != "string")
-                        semanticContext.GetErrors("IsCanvasColor: primer argumento debe ser string", Line);
+                        semanticContext.GetErrors("IsCanvasColor: primer argumento debe ser string", line);
 
                     if (Arguments[1].CheckType(semanticContext) != "int")
-                        semanticContext.GetErrors("IsCanvasColor: segundo argumento debe ser int", Line);
+                        semanticContext.GetErrors("IsCanvasColor: segundo argumento debe ser int", line);
 
                     if (Arguments[2].CheckType(semanticContext) != "int")
-                        semanticContext.GetErrors("IsCanvasColor: tercer argumento debe ser int", Line);
+                        semanticContext.GetErrors("IsCanvasColor: tercer argumento debe ser int", line);
 
                     return "int";
                 }
 
 
-                semanticContext.GetErrors($"Función desconocida '{FunctionKind}'", Line);
+                semanticContext.GetErrors($"Función desconocida '{FunctionKind}'", line);
 
                 return "desconocido";
             }
@@ -331,7 +331,7 @@ namespace WallE
 
             public override string CheckType(SemanticContext semanticContext)
             {
-                semanticContext.GetErrors($"Expresión inválida: {Why}", Line);
+                semanticContext.GetErrors($"Expresión inválida: {Why}", line);
                 return "desconocido";
             }
         }
@@ -369,12 +369,12 @@ namespace WallE
                 var tipo = expression.CheckType(context);
 
                 if (tipo != "string")
-                    context.GetErrors($"Color espera un literal string, recibió '{tipo}'", Line);
+                    context.GetErrors($"Color espera un literal string, recibió '{tipo}'", line);
 
                  if (expression is LiteralNode lit && lit.Value is string colName)
                 {
                     if (!context.ColorsTable.Contains(colName))
-                        context.GetErrors($"Color '{colName}' no declarado", Line);
+                        context.GetErrors($"Color '{colName}' no declarado", line);
                 }
             }
         }
@@ -417,10 +417,10 @@ namespace WallE
                     ("Distancia", DistanceExpression));
 
                 if (DirXExpression is LiteralNode litX && litX.Value is int corX && (corX > 1 || corX < -1))
-                    context.GetErrors($"En DrawLine, el primer parametro debe ser 0, 1 o -1 ", Line);
+                    context.GetErrors($"En DrawLine, el primer parametro debe ser 0, 1 o -1 ", line);
 
                 if (DirYExpression is LiteralNode litY && litY.Value is int corY && (corY > 1 || corY < -1))
-                    context.GetErrors($"En DrawLine, el segundo parametro debe ser 0, 1 o -1 ", Line);
+                    context.GetErrors($"En DrawLine, el segundo parametro debe ser 0, 1 o -1 ", line);
 
             }
         }
@@ -506,12 +506,12 @@ namespace WallE
 
                 if (expressionType == "string")
                 {
-                    context.GetErrors($"Asignacion no valida, no es posible asignar valores de tipo string", Line);
+                    context.GetErrors($"Asignacion no valida, no es posible asignar valores de tipo string", line);
                     return;
                 }
 
                 if (context.VariablesTable.TryGetValue(Identifier, out var variableType) && variableType != "desconocido" && variableType != expressionType)
-                    context.GetErrors($"Variable {Identifier} ya es de tipo {variableType}, no se puede asignar '{expressionType}' ", Line);
+                    context.GetErrors($"Variable {Identifier} ya es de tipo {variableType}, no se puede asignar '{expressionType}' ", line);
 
                 else
                     context.VariablesTable[Identifier] = expressionType;
@@ -554,13 +554,13 @@ namespace WallE
             {
                 if (!context.LabelsTable.ContainsKey(Label))
                 {
-                    context.GetErrors($"Label {Label} no declarado", Line);
+                    context.GetErrors($"Label {Label} no declarado", line);
                 }
 
                 string conditionType = Condition.CheckType(context);
 
                 if (conditionType != "bool")
-                    context.GetErrors($"Condicion de tipo {conditionType}, se esperaba 'bool'", Line);
+                    context.GetErrors($"Condicion de tipo {conditionType}, se esperaba 'bool'", line);
             }
         }
 

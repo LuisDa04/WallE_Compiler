@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ExpressionNode = WallE.AST.ExpressionNode;
 
 namespace WallE
 {
@@ -50,7 +51,7 @@ namespace WallE
                 var actualType = item.expressionNode.CheckType(semanticContext);
 
                 if (actualType != expType)
-                    semanticContext.GetErrors($"'{instruccionName}': el parametro '{item.name}', debe ser '{expType}' y no '{actualType}'.", item.expressionNode.Line);
+                    semanticContext.GetErrors($"'{instruccionName}': el parametro '{item.name}', debe ser '{expType}' y no '{actualType}'.", item.expressionNode.line);
             }
         }
     }

@@ -248,13 +248,13 @@ namespace WallE
             {
                 tok = NextToken();
 
-                if (tok.token == SyntaxKind.Error)
+                if (tok.token == TokenType.Error)
                     Error.SetError("LEXICAL", $"Line{line} : Token no valido: {current}");
 
                 yield return token;
 
             }
-            while (token.Kind != SyntaxKind.EndOfFileToken);
+            while (tok.token != TokenType.EOF);
         }
 
     }
