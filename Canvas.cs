@@ -11,7 +11,6 @@ namespace WallE
         {
             Size = size;
             Pixels = new string[size, size];
-            // Inicializamos el canvas en blanco
             for (int y = 0; y < size; y++)
                 for (int x = 0; x < size; x++)
                     Pixels[y, x] = "White";
@@ -27,17 +26,15 @@ namespace WallE
         {
             if (x >= 0 && x < Size && y >= 0 && y < Size)
                 return Pixels[y, x];
-            return null;
+            return "White";
         }
         
-        // Método para imprimir el canvas (por ejemplo, mostrando la primera letra de cada color)
         public void Print()
         {
             for (int y = 0; y < Size; y++)
             {
                 for (int x = 0; x < Size; x++)
                 {
-                    // Imprime la primera letra del color
                     Console.Write(Pixels[y, x].Substring(0, 1) + " ");
                 }
                 Console.WriteLine();

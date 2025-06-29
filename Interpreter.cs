@@ -40,11 +40,13 @@ namespace WallE
         private int currentY;
         private string brushColor = "Transparent";
         private int brushSize = 1;
+        private Action<string> outputCallback;
 
-        public Interpreter(ProgramNode program, int canvasSize)
+        public Interpreter(ProgramNode program, int canvasSize, Action<string> outputCallback = null)
         {
             this.program = program;
             canvas = new Canvas(canvasSize);
+            this.outputCallback = outputCallback;
 
             for (int i = 0; i < program.Instructions.Count; i++)
             {
@@ -271,8 +273,6 @@ namespace WallE
             return null;
         }
 
-       
-
         private int GetColorCount(string color, int x1, int y1, int x2, int y2)
         {
             int count = 0;
@@ -371,7 +371,6 @@ namespace WallE
             DrawLine(endX, endY, startX, endY);
             DrawLine(startX, endY, startX, startY);
         }
-
         
         private void DrawPixel(int x, int y)
         {
@@ -380,11 +379,18 @@ namespace WallE
                 for (int j = -half; j <= half; j++)
                     canvas.SetPixel(x + i, y + j, brushColor);
         }
-
         
         public void ShowCanvas()
         {
             canvas.Print();
         }
+
+        public string GetCanvasColor(int x, int y)
+        {
+            if (canvas != null && x >= 0 && x < canvas.Size && y >= 0 && y < canvas.Size)
+                return canvas.GetPixel(x, y);
+            return "White"; // o "Transparent" según tu lógica
+        }
+
     }
 }

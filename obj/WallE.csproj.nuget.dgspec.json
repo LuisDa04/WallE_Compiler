@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Prueba WallE\\WallE_Compiler\\WallE.csproj": {}
+    "D:\\Prueba_WallE\\WallE_Compiler\\WallE.csproj": {}
   },
   "projects": {
-    "D:\\Prueba WallE\\WallE_Compiler\\WallE.csproj": {
+    "D:\\Prueba_WallE\\WallE_Compiler\\WallE.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Prueba WallE\\WallE_Compiler\\WallE.csproj",
+        "projectUniqueName": "D:\\Prueba_WallE\\WallE_Compiler\\WallE.csproj",
         "projectName": "WallE",
-        "projectPath": "D:\\Prueba WallE\\WallE_Compiler\\WallE.csproj",
+        "projectPath": "D:\\Prueba_WallE\\WallE_Compiler\\WallE.csproj",
         "packagesPath": "C:\\Users\\OLED\\.nuget\\packages\\",
-        "outputPath": "D:\\Prueba WallE\\WallE_Compiler\\obj\\",
+        "outputPath": "D:\\Prueba_WallE\\WallE_Compiler\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\OLED\\AppData\\Roaming\\NuGet\\NuGet.Config"

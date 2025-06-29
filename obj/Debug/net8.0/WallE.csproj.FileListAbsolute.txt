@@ -3,3 +3,15 @@ D:\Prueba WallE\WallE_Compiler\obj\Debug\net8.0\WallE.AssemblyInfoInputs.cache
 D:\Prueba WallE\WallE_Compiler\obj\Debug\net8.0\WallE.AssemblyInfo.cs
 D:\Prueba WallE\WallE_Compiler\obj\Debug\net8.0\WallE.csproj.CoreCompileInputs.cache
 D:\Prueba WallE\WallE_Compiler\obj\Debug\net8.0\WallE.sourcelink.json
+D:\Prueba_WallE\WallE_Compiler\obj\Debug\net8.0\WallE.GeneratedMSBuildEditorConfig.editorconfig
+D:\Prueba_WallE\WallE_Compiler\obj\Debug\net8.0\WallE.AssemblyInfoInputs.cache
+D:\Prueba_WallE\WallE_Compiler\obj\Debug\net8.0\WallE.AssemblyInfo.cs
+D:\Prueba_WallE\WallE_Compiler\obj\Debug\net8.0\WallE.csproj.CoreCompileInputs.cache
+D:\Prueba_WallE\WallE_Compiler\obj\Debug\net8.0\WallE.sourcelink.json
+D:\Prueba_WallE\WallE_Compiler\bin\Debug\net8.0\WallE.deps.json
+D:\Prueba_WallE\WallE_Compiler\bin\Debug\net8.0\WallE.dll
+D:\Prueba_WallE\WallE_Compiler\bin\Debug\net8.0\WallE.pdb
+D:\Prueba_WallE\WallE_Compiler\obj\Debug\net8.0\WallE.dll
+D:\Prueba_WallE\WallE_Compiler\obj\Debug\net8.0\refint\WallE.dll
+D:\Prueba_WallE\WallE_Compiler\obj\Debug\net8.0\WallE.pdb
+D:\Prueba_WallE\WallE_Compiler\obj\Debug\net8.0\ref\WallE.dll
