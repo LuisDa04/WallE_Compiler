@@ -103,8 +103,13 @@ namespace WallE
             position++;
             var stock = text.Substring(start, position - start);
 
-            var center = stock.Substring(1, stock.Length - 2);
+            if (stock.Length < 2)
+            {
+                Error.SetError("SYNTAX", $"Line {line}: Cadena demasiado corta o incompleta");
+                return new Token(TokenType.Error, line, start, stock, null!);
+            }
 
+            var center = stock.Substring(1, stock.Length - 2);
             string clean = center.Replace("\\\"", "\"").Replace("\\\\", "\\");
 
             return new Token(TokenType.String, line, start, stock, clean);
