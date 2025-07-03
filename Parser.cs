@@ -80,6 +80,8 @@ namespace WallE
 
         public ProgramNode ParseProgram()
         {
+            Error.ErrorsClear();
+            
             var instructions = new List<InstructionNode>();
 
             while (Current.token == TokenType.WhiteEspace)
