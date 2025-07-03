@@ -1,8 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "RIONjSJaM2POSPt4uGFDXp9zpc9dOdTfLM73bzcYizxJ91KcZ/p2PD9VTizGWQy149V8Zdvo5KBwIWf0bd/Kbg==",
+  "dgSpecHash": "vb0VhQDWpKymw5tkYnUlaHI6wRFYd3emSqxk8qtwTXlAtPJsMCRFmGBaEjPs+m7gpT/61iXMGndpvrjtkrDpOQ==",
   "success": true,
   "projectFilePath": "D:\\Prueba_WallE\\WallE_Compiler\\WallE.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\OLED\\.nuget\\packages\\microsoft.win32.systemevents\\7.0.0\\microsoft.win32.systemevents.7.0.0.nupkg.sha512",
+    "C:\\Users\\OLED\\.nuget\\packages\\system.drawing.common\\7.0.0\\system.drawing.common.7.0.0.nupkg.sha512"
+  ],
   "logs": []
 }

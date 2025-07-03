@@ -68,7 +68,7 @@ namespace WallE
             if (Current.token == kind)
                 return NextToken();
 
-            Error.SetError("SYNTAX", $"Line {Current.line}: Error en el analisis de la cadena");
+            Error.SetError("SYNTAX", "Error en el analisis de la cadena", Current.line);
 
             var wrong = Current;
 
@@ -86,7 +86,7 @@ namespace WallE
                 NextToken();
                 
             if (Current.token != TokenType.Spawn)
-                Error.SetError("SYNTAX", $"Line {Current.line}: El programa debe comenzar con Spawn");
+                Error.SetError("SYNTAX", "El programa debe comenzar con Spawn", Current.line);
             
             else
                 instructions.Add(ParseSpawn());
@@ -117,7 +117,7 @@ namespace WallE
                 NextToken();
 
                 if (!labelsTable.TryAdd(labelToken.text, labelToken.line))
-                    Error.SetError("SYNTAX", $"Line {labelToken.line}: La etiqueta '{labelToken.text}' ya esta definida");
+                    Error.SetError("SYNTAX", $"La etiqueta '{labelToken.text}' ya esta definida", labelToken.line);
                 
                 return new LabelNode(labelToken.text, labelToken.line);
             }
@@ -136,7 +136,7 @@ namespace WallE
 
 
                     default:
-                        Error.SetError("SYNTAX", $"Line {Current.line}: Instruccion desconocida: {Current.text}");
+                        Error.SetError("SYNTAX", $"Instruccion desconocida: {Current.text}", Current.line);
 
                         while (!IsAtEnd && Current.token != TokenType.NewLine)
                             NextToken();
@@ -177,7 +177,7 @@ namespace WallE
             var labelToken = Match(TokenType.Identificador, "Se esperaba un identifier dentro de GoTo");
 
             if (!labelsTable.ContainsKey(labelToken.text))
-                Error.SetError("SEMANTIC", $"Line {Current.line}: La etiqueta {labelToken.text} no existe en el contexto actual");
+                Error.SetError("SEMANTIC", $"La etiqueta {labelToken.text} no existe en el contexto actual", Current.line);
             
 
             Match(TokenType.CorcheteCierra, "Se esperaba ']'");
@@ -201,11 +201,11 @@ namespace WallE
             {
                 var args = ParseParameters();
                 if (args.Count > 0)
-                    Error.SetError("SYNTAX", $"Line {Current.line}: Fill no recibe parámetros");
+                    Error.SetError("SYNTAX", "Fill no recibe parámetros", Current.line);
             }
 
             else
-                Error.SetError("SYNTAX", $"Line {Current.line}: Se esperaba () despues de Fill");
+                Error.SetError("SYNTAX", "Se esperaba () despues de Fill", Current.line);
 
             return new FillNode(Current.line);
         }
@@ -232,7 +232,7 @@ namespace WallE
 
                 if (!EsOperadorBinarioValido(opToken.token))
                 {
-                    Error.SetError("SYNTAX", $"Line {opToken.line}: Operador binario inesperado: '{opToken.text}'");
+                    Error.SetError("SYNTAX", $"Operador binario inesperado: '{opToken.text}'", opToken.line);
 
                     return new InvalidExpressionNode($"Operador inesperado: '{opToken.text}'", opToken.line);
                 }
@@ -299,7 +299,7 @@ namespace WallE
                 if (int.TryParse(text, out int value))
                     return new LiteralNode(value, Current.line);
 
-                Error.SetError("SYNTAX", $"Line {Current.line}: Número inválido '{text}'");
+                Error.SetError("SYNTAX", $"Número inválido '{text}'", Current.line);
 
                 return new InvalidExpressionNode($"Número inválido '{text}'", Current.line);
             }
@@ -353,7 +353,7 @@ namespace WallE
                     if (Enum.TryParse<FunctionKind>(name, out var kind))
                         return new BuiltInFunctionNode(kind, args, token.line);
 
-                    Error.SetError("SYNTAX", $"Line {token.line}: Función desconocida '{name}'");
+                    Error.SetError("SYNTAX", $"Función desconocida '{name}'", token.line);
                     return new InvalidExpressionNode($"Función desconocida '{name}'", token.line);
                 }
 
@@ -375,7 +375,7 @@ namespace WallE
 
             var wrong = Current;
 
-            Error.SetError("SYNTAX", $"Line {wrong.line}: Se esperaba expresión primaria, encontró '{wrong.text}'");
+            Error.SetError("SYNTAX", $"Se esperaba expresión primaria, encontró '{wrong.text}'", wrong.line);
 
             NextToken();
 
@@ -400,7 +400,7 @@ namespace WallE
             var parameters = ParseParameters();
 
             if (parameters.Count != 2)
-                Error.SetError("SYNTAX", $"line {Current.line}: Spawn requiere solo 2 parametros");
+                Error.SetError("SYNTAX", "Spawn requiere solo 2 parametros", Current.line);
 
 
             var xExpr = parameters.ElementAtOrDefault(0) ?? new LiteralNode(0, Current.line);
@@ -428,7 +428,7 @@ namespace WallE
             var parameters = ParseParameters();
 
             if (parameters.Count != 1)
-                Error.SetError("SYNTAX", $"Line {Current.line}: Size solo requiere un parametro");
+                Error.SetError("SYNTAX", "Size solo requiere un parametro", Current.line);
 
             var sizeArg = parameters.ElementAtOrDefault(0) ?? new LiteralNode(1, Current.line);
 
@@ -442,7 +442,7 @@ namespace WallE
             var parameters = ParseParameters();
 
             if (parameters.Count != 3)
-                Error.SetError("SYNTAX", $"Line {Current.line}: DrawLine requiere 3 parámetros");
+                Error.SetError("SYNTAX", "DrawLine requiere 3 parámetros", Current.line);
 
             var firstArg = parameters.ElementAtOrDefault(0) ?? new LiteralNode(0, Current.line);
 
@@ -460,7 +460,7 @@ namespace WallE
             var parameters = ParseParameters();
 
             if (parameters.Count != 3)
-                Error.SetError("SYNTAX", $"Line {Current.line}: DrawCircle requiere 3 parámetros");
+                Error.SetError("SYNTAX", "DrawCircle requiere 3 parámetros", Current.line);
 
             var firstArg = parameters.ElementAtOrDefault(0) ?? new LiteralNode(0, Current.line);
 
@@ -478,7 +478,7 @@ namespace WallE
             var parameters = ParseParameters();
 
             if (parameters.Count != 5)
-                Error.SetError("SYNTAX", $"Line {Current.line}: DrawRectangle solo requiere 5 parámetros");
+                Error.SetError("SYNTAX", "DrawRectangle solo requiere 5 parámetros", Current.line);
 
             var dirX  = parameters.ElementAtOrDefault(0) ?? new LiteralNode(0, Current.line);
             var dirY  = parameters.ElementAtOrDefault(1) ?? new LiteralNode(0, Current.line);

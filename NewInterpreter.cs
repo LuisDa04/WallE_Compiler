@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using WallE;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Runtime.Versioning;
 using AST = WallE.AST;
@@ -109,7 +108,7 @@ namespace WallE
                 if (programNode.Instructions[i] is LabelNode labelNode)
                 {
                     if (LabelsTable.ContainsKey(labelNode.LabelName))
-                        throw new Exception($"Label duplicado '{labelNode.LabelName}' en la línea {labelNode.Line}");
+                        throw new Exception($"Label duplicado '{labelNode.LabelName}' en la línea {labelNode.line}");
 
                     LabelsTable[labelNode.LabelName] = i + 1;
 
@@ -151,7 +150,7 @@ namespace WallE
             { }
 
             else
-                throw new Exception($"Instrucción no reconocida: {instructionNode.GetType().Name} en la línea {instructionNode.Line}");
+                throw new Exception($"Instrucción no reconocida: {instructionNode.GetType().Name} en la línea {instructionNode.line}");
         }
 
         private void DoAssignment(AssignmentNode assignmentNode)
@@ -268,7 +267,7 @@ namespace WallE
                 int dist = EvaluateInt(drawLineNode.DistanceExpression);
 
                 if (dirX < -1 || dirX > 1 || dirY < -1 || dirY > 1)
-                    throw new Exception($"DrawLine: dirección inválida ({dirX},{dirY}) en línea {drawLineNode.Line}. " + "Sólo se permiten -1, 0 o 1.");
+                    throw new Exception($"DrawLine: dirección inválida ({dirX},{dirY}) en línea {drawLineNode.line}. " + "Sólo se permiten -1, 0 o 1.");
 
                 for (int i = 0; i <= dist; i++)
                 {
@@ -286,7 +285,7 @@ namespace WallE
             catch (Exception ex)
             {
                 Stop($"Error en DrawLine:{ex.Message}");
-                Error.SetError("RUNTIME", $"Line {drawLineNode.line}: {ex.Message}");
+                Error.SetError("RUNTIME", $"{ex.Message}", drawLineNode.line);
             }
         }
 
@@ -397,7 +396,7 @@ namespace WallE
             {
                 var val = Evaluate(unaryExpressionNode.MiddleExpression);
 
-                return unaryExpressionNode.Operator == UnaryOperator.Minus ? -(int)val : !(bool)val;
+                return unaryExpressionNode.Operator == UnaryOperator.Resta ? -(int)val : !(bool)val;
             }
 
             if (expressionNode is BinaryExpressionNode binaryExpressionNode)
@@ -406,47 +405,47 @@ namespace WallE
 
                 var right = Evaluate(binaryExpressionNode.RightExpressionNode);
 
-                if (binaryExpressionNode.Operator == BinaryOperator.Plus)
+                if (binaryExpressionNode.Operator == BinaryOperator.Suma)
 
                     return (int)left + (int)right;
 
-                else if (binaryExpressionNode.Operator == BinaryOperator.Minus)
+                else if (binaryExpressionNode.Operator == BinaryOperator.Resta)
                     return (int)left - (int)right;
 
-                else if (binaryExpressionNode.Operator == BinaryOperator.Mult)
+                else if (binaryExpressionNode.Operator == BinaryOperator.Multiplicacion)
                     return (int)left * (int)right;
 
-                else if (binaryExpressionNode.Operator == BinaryOperator.Pow)
+                else if (binaryExpressionNode.Operator == BinaryOperator.Potencia)
                     return (int)Math.Pow((int)left, (int)right);
 
-                else if (binaryExpressionNode.Operator == BinaryOperator.Slash)
+                else if (binaryExpressionNode.Operator == BinaryOperator.Division)
                     return (int)left / (int)right;
 
-                else if (binaryExpressionNode.Operator == BinaryOperator.Mod)
+                else if (binaryExpressionNode.Operator == BinaryOperator.Modulo)
                     return (int)left % (int)right;
 
-                else if (binaryExpressionNode.Operator == BinaryOperator.LessThan)
+                else if (binaryExpressionNode.Operator == BinaryOperator.MenorQue)
                     return (int)left < (int)right;
 
-                else if (binaryExpressionNode.Operator == BinaryOperator.GreaterThan)
+                else if (binaryExpressionNode.Operator == BinaryOperator.MayorQue)
                     return (int)left > (int)right;
 
-                else if (binaryExpressionNode.Operator == BinaryOperator.LessThanOrEqual)
+                else if (binaryExpressionNode.Operator == BinaryOperator.MenorIgualQue)
                     return (int)left <= (int)right;
 
-                else if (binaryExpressionNode.Operator == BinaryOperator.GreaterThanOrEqual)
+                else if (binaryExpressionNode.Operator == BinaryOperator.MayorIgualQue)
                     return (int)left >= (int)right;
 
-                else if (binaryExpressionNode.Operator == BinaryOperator.Equal)
+                else if (binaryExpressionNode.Operator == BinaryOperator.IgualQue)
                     return left.Equals(right);
 
-                else if (binaryExpressionNode.Operator == BinaryOperator.NotEqual)
+                else if (binaryExpressionNode.Operator == BinaryOperator.NoIgual)
                     return !left.Equals(right);
 
-                else if (binaryExpressionNode.Operator == BinaryOperator.AndAnd)
+                else if (binaryExpressionNode.Operator == BinaryOperator.And)
                     return (bool)left && (bool)right;
 
-                else if (binaryExpressionNode.Operator == BinaryOperator.OrOr)
+                else if (binaryExpressionNode.Operator == BinaryOperator.Or)
                     return (bool)left || (bool)right;
             }
 
@@ -537,7 +536,7 @@ namespace WallE
                 }
             }
 
-            throw new InvalidOperationException($"No se puede evaluar una expresion de tipo '{expressionNode.GetType().Name}' en la linea {expressionNode.Line}");
+            throw new InvalidOperationException($"No se puede evaluar una expresion de tipo '{expressionNode.GetType().Name}' en la linea {expressionNode.line}");
         }
 
         int EvaluateInt(ExpressionNode expressionNode)

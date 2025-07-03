@@ -82,7 +82,7 @@ namespace WallE
             {
                 if(current == '\n')
                 {
-                    Error.SetError("SYNTAX", $"Line {line}: Saltos de linea no validos");
+                    Error.SetError("SYNTAX", "Saltos de linea no validos", line);
                     return new Token(TokenType.Error, line, position, text.Substring(start), null!);
                 }
 
@@ -97,7 +97,7 @@ namespace WallE
 
             if(current == '\0')
             {
-                Error.SetError("SYNTAX", $"Line {line}: No es una cadena valida");
+                Error.SetError("SYNTAX", "No es una cadena valida", line);
                 return new Token(TokenType.Error, line, start, text.Substring(start, position - start), null!);
             }            
             position++;
@@ -105,7 +105,7 @@ namespace WallE
 
             if (stock.Length < 2)
             {
-                Error.SetError("SYNTAX", $"Line {line}: Cadena demasiado corta o incompleta");
+                Error.SetError("SYNTAX", "Cadena demasiado corta o incompleta", line);
                 return new Token(TokenType.Error, line, start, stock, null!);
             }
 
@@ -126,7 +126,7 @@ namespace WallE
             var test = text.Substring(start, position - start);
             if(!int.TryParse(test, out var value))
             {
-                Error.SetError("LEXICAL", $"Line {line}: Numero no valido '{text}'");
+                Error.SetError("LEXICAL", $"Numero no valido '{text}'", line);
                 return new Token(TokenType.Error, line, start, text, null!);
             }
 
@@ -200,7 +200,7 @@ namespace WallE
 
         private Token TheresError(string test, int start)
         {
-            Error.SetError("LEXICAL", $"Line {line}: Token inválido '{test}'");
+            Error.SetError("LEXICAL", $"Token inválido '{test}'", line);
             return new Token(TokenType.Error, line, start, test, null!);
         }
 
@@ -226,7 +226,7 @@ namespace WallE
 
             if (char.IsDigit(current) || current == '-')
             {
-                Error.SetError("LEXICAL", $"Line{line} : Identificador Invalido :{current}");
+                Error.SetError("LEXICAL", $"Identificador Invalido :{current}", line);
                 position++;
                 return new Token(TokenType.Error, line, start, text.Substring(start, 1), null!);
             }
@@ -254,7 +254,7 @@ namespace WallE
                 tok = NextToken();
 
                 if (tok.token == TokenType.Error)
-                    Error.SetError("LEXICAL", $"Line{line} : Token no valido: {current}");
+                    Error.SetError("LEXICAL", $"Token no valido: {current}", line);
 
                 yield return tok;
 

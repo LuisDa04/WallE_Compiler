@@ -15,3 +15,4 @@ D:\Prueba_WallE\WallE_Compiler\obj\Debug\net8.0\WallE.dll
 D:\Prueba_WallE\WallE_Compiler\obj\Debug\net8.0\refint\WallE.dll
 D:\Prueba_WallE\WallE_Compiler\obj\Debug\net8.0\WallE.pdb
 D:\Prueba_WallE\WallE_Compiler\obj\Debug\net8.0\ref\WallE.dll
+D:\Prueba_WallE\WallE_Compiler\obj\Debug\net8.0\WallE.csproj.AssemblyReference.cache

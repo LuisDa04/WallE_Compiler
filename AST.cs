@@ -577,6 +577,7 @@ namespace WallE
             MenorIgualQue,
             MayorIgualQue,
             IgualQue,
+            NoIgual,
             And,
             Or
         }
