@@ -88,7 +88,7 @@ namespace WallE
                 if (programNode.Instructions[flag] is GoToNode goToNode)
                 {
                     if (EvaluateBool(goToNode.Condition) && LabelsTable.ContainsKey(goToNode.Label))
-                    {//si la condicion es true y existe el label
+                    {
                         flag = LabelsTable[goToNode.Label];
                         continue;
                     }

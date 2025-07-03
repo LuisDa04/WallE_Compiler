@@ -27,6 +27,9 @@ namespace WallE
             ["IsBrushColor"] = TokenType.IsBrushColor,
             ["IsBrushSize"] = TokenType.IsBrushSize,
             ["IsCanvasColor"] = TokenType.IsCanvasColor,
+
+            ["true"] = TokenType.TrueTok,
+            ["false"] = TokenType.FalseTok,
         };
 
         public static TokenType GetKeywordToken(string text)

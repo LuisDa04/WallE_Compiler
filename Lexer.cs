@@ -52,6 +52,8 @@ namespace WallE
             if(char.IsLetter(current))
                 return ObtenerIdentificador();
 
+
+
             string test = text.Substring(position, 1);
             var error = new Token(TokenType.Error, line, position, test, null!);
             position++;
@@ -229,6 +231,12 @@ namespace WallE
                 Error.SetError("LEXICAL", $"Identificador Invalido :{current}", line);
                 position++;
                 return new Token(TokenType.Error, line, start, text.Substring(start, 1), null!);
+            }
+
+            if (text == "true" || text == "false")
+            {
+                bool value = text == "true";
+                return new Token(value ? TokenType.TrueTok : TokenType.FalseTok, line, start, text, value);
             }
 
             position++;
