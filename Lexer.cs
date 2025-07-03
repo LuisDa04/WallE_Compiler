@@ -238,7 +238,6 @@ namespace WallE
                 bool value = text == "true";
                 return new Token(value ? TokenType.TrueTok : TokenType.FalseTok, line, start, text, value);
             }
-
             position++;
 
             while (char.IsLetterOrDigit(current) || current == '_')
@@ -246,7 +245,6 @@ namespace WallE
 
             int identLenght = position - start;
             string identText = text.Substring(start, identLenght);
-
 
             TokenType token = LexerUtilities.GetKeywordToken(identText);
 

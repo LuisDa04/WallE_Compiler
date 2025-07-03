@@ -81,7 +81,16 @@ namespace WallE
         public ProgramNode ParseProgram()
         {
             Error.ErrorsClear();
-            
+
+            var labels = new Dictionary<string,int>();
+            for (int i = 0; i < Tokens.Count; i++)
+            {
+                if (Tokens[i].token == TokenType.Label)
+                {
+                    labels[Tokens[i].text] = i;
+                }
+            }
+
             var instructions = new List<InstructionNode>();
 
             while (Current.token == TokenType.WhiteEspace)
@@ -112,6 +121,14 @@ namespace WallE
         InstructionNode ParseInstruction()
         {
 
+            if (Current.token == TokenType.Label)
+            {
+                var label = Current.text;
+                NextToken(); // Consumir el label
+                NextToken(); // Consumir el NewLine
+                return new LabelNode(label, Current.line);
+            }
+
             if (Current.token == TokenType.Identificador && LookAhead(1).token == TokenType.NewLine)
             {
                 var labelToken = NextToken();
@@ -119,8 +136,13 @@ namespace WallE
                 NextToken();
 
                 if (!labelsTable.TryAdd(labelToken.text, labelToken.line))
+                {
                     Error.SetError("SYNTAX", $"La etiqueta '{labelToken.text}' ya esta definida", labelToken.line);
-                
+                }
+                else if (!labelsTable.ContainsKey(labelToken.text))
+                {
+                    labelsTable.Add(labelToken.text, labelToken.line);
+                }
                 return new LabelNode(labelToken.text, labelToken.line);
             }
 
@@ -386,7 +408,7 @@ namespace WallE
 
         InstructionNode ParseAssignment()
         {
-            var idToken = Match(TokenType.Identificador, "Se esperaba identifier");
+            var idToken = Match(TokenType.Identificador, "Se esperaba identificador");
 
             Match(TokenType.Asignacion, "Se esperaba '<-'");
 
@@ -526,6 +548,41 @@ namespace WallE
             };
         }
 
+        // public class LabelCollector
+        // {
+        //     private readonly List<Token> tokens;
+        //     private int position;
+
+        //     public LabelCollector(IEnumerable<Token> tokens)
+        //     {
+        //         this.tokens = tokens.ToList();
+        //     }
+
+        //     public Dictionary<string, int> CollectLabels()
+        //     {
+        //         var labels = new Dictionary<string, int>();
+        //         position = 0;
+
+        //         while (!IsAtEnd)
+        //         {
+        //             if (Current.token == TokenType.Identificador && LookAhead(1).token == TokenType.NewLine)
+        //             {
+        //                 labels[Current.text] = Current.line;
+        //                 position += 2; // Saltar identificador y newline
+        //             }
+        //             else
+        //             {
+        //                 position++;
+        //             }
+        //         }
+
+        //         return labels;
+        //     }
+
+        //     private Token Current => position < tokens.Count ? tokens[position] : tokens.Last();
+        //     private Token LookAhead(int offset) => position + offset < tokens.Count ? tokens[position + offset] : tokens.Last();
+        //     private bool IsAtEnd => position >= tokens.Count;
+        // }
 
 
 
