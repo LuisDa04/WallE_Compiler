@@ -548,43 +548,5 @@ namespace WallE
             };
         }
 
-        // public class LabelCollector
-        // {
-        //     private readonly List<Token> tokens;
-        //     private int position;
-
-        //     public LabelCollector(IEnumerable<Token> tokens)
-        //     {
-        //         this.tokens = tokens.ToList();
-        //     }
-
-        //     public Dictionary<string, int> CollectLabels()
-        //     {
-        //         var labels = new Dictionary<string, int>();
-        //         position = 0;
-
-        //         while (!IsAtEnd)
-        //         {
-        //             if (Current.token == TokenType.Identificador && LookAhead(1).token == TokenType.NewLine)
-        //             {
-        //                 labels[Current.text] = Current.line;
-        //                 position += 2; // Saltar identificador y newline
-        //             }
-        //             else
-        //             {
-        //                 position++;
-        //             }
-        //         }
-
-        //         return labels;
-        //     }
-
-        //     private Token Current => position < tokens.Count ? tokens[position] : tokens.Last();
-        //     private Token LookAhead(int offset) => position + offset < tokens.Count ? tokens[position + offset] : tokens.Last();
-        //     private bool IsAtEnd => position >= tokens.Count;
-        // }
-
-
-
     }
 }
